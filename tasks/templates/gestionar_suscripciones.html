@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="gestion-roles-container mt-5">
+    <h2 class="section-title">Gestionar suscripciones</h2>
+    <p class="section-description">Consulta el estado actual de cada usuario según su plan y fechas.</p>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="input-error">{{ message|safe }}</div>
+    {% else %}
+    <div class="input-success">{{ message|safe }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <div class="tabla-usuarios-wrapper">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Plan</th>
+                    <th>Estado</th>
+                    <th>Activado el</th>
+                    <th>Expira el</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in perfiles %}
+                <tr>
+                    <td>{{ perfil.user.first_name }} {{ perfil.user.last_name }}</td>
+                    <td>{{ perfil.get_plan_display }}</td>
+                    <td>
+                        {% if perfil.is_activo %}
+                        <span class="badge badge-success">Activo</span>
+                        {% else %}
+                        <span class="badge badge-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ perfil.activated_on|date:"d/m/Y" }}</td>
+                    <td>{{ perfil.expires_on|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

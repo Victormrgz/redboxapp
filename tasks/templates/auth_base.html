@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Redbox | Auth</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="auth-body">
+    <nav class="auth-navbar">
+        <img src="{% static 'monogram.svg' %}" class="auth-logo--monogram">
+        <img src="{% static 'logoblanco.svg' %}" class="auth-logo--text">
+    </nav>
+
+    <main class="auth-content">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+
+</html>

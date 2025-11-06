@@ -1,0 +1,73 @@
+{% extends 'auth_base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<form method="POST" class="signup-form">
+    {% csrf_token %}
+
+    <h2 class="form-title">Bienvenid@ a REDBOX</h2>
+
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <span class="input-error">{{ error }}</span>
+    {% endfor %}
+    {% endif %}
+
+    <div class="form-group">
+        {{ form.username|add_class:"input-field" }}
+        {% for error in form.username.errors %}
+        <span class="input-error">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-row">
+        <div class="form-group half">
+            {{ form.first_name|add_class:"input-field" }}
+            {% for error in form.first_name.errors %}
+            <span class="input-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group half">
+            {{ form.last_name|add_class:"input-field" }}
+            {% for error in form.last_name.errors %}
+            <span class="input-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form.email|add_class:"input-field" }}
+        {% for error in form.email.errors %}
+        <span class="input-error">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.password1|add_class:"input-field" }}
+        {% for error in form.password1.errors %}
+        <span class="input-error">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.password2|add_class:"input-field" }}
+        {% for error in form.password2.errors %}
+        <span class="input-error">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form.codigo_invitacion|add_class:"input-field" }}
+        {% for error in form.codigo_invitacion.errors %}
+        <span class="input-error">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Registrarse</button>
+
+    <p class="form-link">
+        ¿Ya tienes una cuenta?
+        <a href="{% url 'signin' %}">Inicia sesión aquí</a>
+    </p>
+</form>
+{% endblock %}

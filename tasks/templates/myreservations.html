@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="gestion-roles-container mt-5">
+    <h2 class="section-title">Mis reservas</h2>
+    <p class="section-description mb-4">Consulta tu historial y resumen mensual de clases.</p>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="input-error">{{ message|safe }}</div>
+    {% else %}
+    <div class="input-success">{{ message|safe }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- Resumen mensual -->
+    <div class="resumen-mensual mt-2">
+        <div class="card-resumen">
+            <p><strong>Créditos usados:</strong> {{ creditos_usados }}</p>
+            <p><strong>Créditos disponibles:</strong> {{ creditos_disponibles }}</p>
+        </div>
+    </div>
+
+    <!-- Historial de reservas -->
+    {% for mes, reservas in reservas_por_mes.items %}
+    <h4 class="section-subtitle mt-4 mb-0">{{ mes|capfirst }}</h4>
+    <div class="tabla-usuarios-wrapper mb-3">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservas %}
+                <tr>
+                    <td>{{ r.fecha|date:"d/m/Y" }}</td>
+                    <td>{{ r.hora|time:"H:i" }}</td>
+                    <td>{{ r.estado }}</td>
+                    <td class="text-start">
+                        {% if r.estado == "Pendiente" %}
+                        <form method="post" action="{% url 'cancelar_reserva' r.id %}" style="text-align: left;">
+                            {% csrf_token %}
+                            <input type="hidden" name="origen" value="myreservations">
+                            <button type="submit" class="btn-cancelar"
+                                onclick="return confirm('¿Estás seguro que deseas cancelar esta reserva?')">Cancelar</button>
+                        </form>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% empty %}
+    <p class="section-description">No tienes reservas registradas aún.</p>
+    {% endfor %}
+</div>
+{% endblock %}

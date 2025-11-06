@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-header mt-5">
+    <h2 class="section-title">Editar perfil</h2>
+    <p class="section-description mb-4">Actualiza tu información personal para mejorar tu experiencia.</p>
+
+    <form method="POST" class="perfil-form">
+        {% csrf_token %}
+
+        <div class="perfil-grid-dos-columnas">
+            <div class="perfil-group">
+                {{ form.phone.label_tag }}
+                <input type="text" name="{{ form.phone.name }}" value="{{ form.phone.value|default_if_none:'' }}"
+                    class="input-field" inputmode="numeric" pattern="[0-9]*" title="Solo números"
+                    placeholder="04121234567">
+                {{ form.phone.errors }}
+            </div>
+            <div class="perfil-group">
+                {{ form.birth_date.label_tag }}
+                <input type="date" name="{{ form.birth_date.name }}" value="{{ form.birth_date.value|date:'Y-m-d' }}"
+                    class="input-field">
+            </div>
+            <div class="perfil-group">
+                {{ form.gender.label_tag }}
+                {{ form.gender }}
+            </div>
+            <div class="perfil-group">
+                {{ form.identity_card.label_tag }}
+                {{ form.identity_card }}
+            </div>
+            <div class="perfil-group">
+                {{ form.weight.label_tag }}
+                <input type="text" name="{{ form.weight.name }}" value="{{ form.weight.value|default_if_none:'' }}"
+                    class="input-field" inputmode="decimal" placeholder="kg">
+                {{ form.weight.errors }}
+            </div>
+            <div class="perfil-group">
+                {{ form.height.label_tag }}
+                <input type="text" name="{{ form.height.name }}" value="{{ form.height.value|default_if_none:'' }}"
+                    class="input-field" inputmode="decimal" placeholder="cm">
+                {{ form.height.errors }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-danger btn-full mt-3">Guardar cambios</button>
+    </form>
+</div>
+{% endblock %}

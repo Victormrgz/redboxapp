@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="mt-5">
+        <h2 class="section-title">Ver planificación</h2>
+        <p class="section-description">Consulta el contenido del entrenamiento para una fecha específica.</p>
+    </div>
+
+    <form method="GET" class="planificacion-form-card">
+        <div class="form-group">
+            <label for="fecha">Selecciona una fecha:</label>
+            <input type="date" name="fecha" id="fecha" class="input-field" value="{{ fecha }}">
+        </div>
+        <button type="submit" class="btn btn-danger">Buscar</button>
+    </form>
+
+    {% if fecha %}
+    {% if planificacion %}
+    <div class="planificacion-form-card" style="margin-top: 2rem;">
+        <h3 class="section-title">Planificación del {{ planificacion.fecha|date:"d/m/Y" }}</h3>
+        <div class="planificacion-contenido">{{ planificacion.contenido|linebreaks }}</div>
+    </div>
+    {% else %}
+    <div class="alert mt-4">No hay planificación registrada para el {{ fecha }}.</div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

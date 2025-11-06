@@ -1,0 +1,34 @@
+{% extends 'auth_base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<form method="POST" class="signup-form">
+    {% csrf_token %}
+
+    <h2 class="form-title">Bienvenid@ de vuelta a REDBOX</h2>
+
+    <div class="form-group">
+        {{ form.identifier|add_class:"input-field" }}
+        {% for err in form.identifier.errors %}
+        <span class="input-error">{{ err }}</span>
+        {% endfor %}
+        {% if error %}
+        <span class="input-error">{{ error }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        {{ form.password|add_class:"input-field" }}
+        {% for err in form.password.errors %}
+        <span class="input-error">{{ err }}</span>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="signup-btn">Iniciar sesión</button>
+
+    <p class="form-link mt-3">
+        ¿No tienes cuenta?
+        <a href="{% url 'signup' %}">Crea una aquí</a>
+    </p>
+</form>
+{% endblock %}

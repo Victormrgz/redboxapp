@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load comparadores %}
+
+{% block content %}
+<div class="gestion-roles-container mt-5">
+    <h2 class="section-title">Historial de pagos</h2>
+    <p class="section-description">Consulta los pagos registrados y suscripciones aplicadas.</p>
+
+    <form method="GET" class="d-flex flex-row gap-2 mt-5">
+        <select name="usuario_id" class="input-field">
+            <option value="">Todos los usuarios</option>
+            {% for perfil in perfiles %}
+            <option value="{{ perfil.id }}" {% if perfil.id|igual:usuario_id %}selected{% endif %}>
+                {{ perfil.user.first_name }} {{ perfil.user.last_name }}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-danger btn-full">Filtrar</button>
+    </form>
+
+    <div class="tabla-usuarios-wrapper">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Moneda</th>
+                    <th>Plan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pago in pagos %}
+                <tr>
+                    <td>{{ pago.perfil.user.first_name }} {{ pago.perfil.user.last_name }}</td>
+                    <td>{{ pago.fecha_pago|date:"d/m/Y" }}</td>
+                    <td>{{ pago.monto }}</td>
+                    <td>{{ pago.get_moneda_display }}</td>
+                    <td>{{ pago.get_plan_display }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No se han registrado pagos aún.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

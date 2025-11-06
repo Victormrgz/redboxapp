@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-header mt-5">
+    <h2 class="section-title mb-4">Classes</h2>
+
+    <div class="clases-formulario">
+        <form method="POST" class="mb-4">
+            {% csrf_token %}
+
+            <div class="reserva-layout">
+                <div class="reserva-form">
+                    <div class="form-row">
+                        <div class="form-group compact">
+                            {{ form.date.label_tag }}
+                            {{ form.date }}
+                        </div>
+                        <div class="form-group compact">
+                            {{ form.time_slot.label_tag }}
+                            {{ form.time_slot }}
+                        </div>
+                    </div>
+
+                    {% if show_errors and form.errors %}
+                    <div class="input-error">
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex flex-column align-items-start gap-2 mt-3">
+                        <button type="submit" name="action" value="reserve" class="btn btn-danger btn-full mb-2">
+                            Reservar clase
+                        </button>
+                        <button type="submit" name="action" value="view" class="btn btn-secondary btn-full"
+                            id="ver-reservas-btn">
+                            Ver reservas
+                        </button>
+                    </div>
+
+                    {% if selected_date and selected_time %}
+                    <p class="reservation-label">Reservas para {{ selected_date }} a las {{ selected_time }}</p>
+                    <ul class="list-group reservation-list">
+                        {% for r in reservations %}
+                        <li class="list-group-item">
+                            {% if r.user.first_name or r.user.last_name %}
+                            {{ r.user.first_name }} {{ r.user.last_name }}
+                            {% else %}
+                            {{ r.user.username }}
+                            {% endif %}
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item">No hay reservas aún.</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="planificacion-box">
+                    <label>Planificación del día:</label>
+                    {% if planificacion %}
+                    <div id="planificacion">{{ planificacion|linebreaksbr }}</div>
+                    {% else %}
+                    <p style="color: #666;">Aún no existe planificación para este día.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

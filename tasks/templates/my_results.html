@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-header mt-5">
+    <h2 class="section-title">Mis resultados</h2>
+    <p class="section-description mb-4">Registra tus levantamientos y consulta tus récords personales.</p>
+
+    <div class="resultados-formulario">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="resultados-layout">
+                <div class="reserva-form">
+                    <div class="perfil-grid-dos-columnas">
+                        <div class="perfil-group">
+                            {{ form.movement.label_tag }}
+                            {{ form.movement }}
+                        </div>
+                        <div class="perfil-group">
+                            {{ form.date.label_tag }}
+                            {{ form.date }}
+                        </div>
+                        <div class="perfil-group">
+                            {{ form.rounds.label_tag }}
+                            {{ form.rounds }}
+                        </div>
+                        <div class="perfil-group">
+                            {{ form.reps.label_tag }}
+                            {{ form.reps }}
+                        </div>
+                        <div class="perfil-group">
+                            {{ form.weight.label_tag }}
+                            {{ form.weight }}
+                        </div>
+                        <div class="perfil-group">
+                            {{ form.unit.label_tag }}
+                            {{ form.unit }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-full mt-4">Guardar resultado</button>
+                </div>
+
+                <div class="planificacion-box">
+                    <label>Tus récords personales:</label>
+                    {% if prs %}
+                    <table class="tabla-usuarios mt-3">
+                        <thead>
+                            <tr>
+                                <th>Movimiento</th>
+                                <th>Peso</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pr in prs %}
+                            <tr>
+                                <td>{{ pr.label }}</td>
+                                <td>{{ pr.weight }}{{ pr.unit }}</td>
+                                <td>{{ pr.date|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{% url 'detalle_resultados' %}" class="btn btn-secondary btn-full mt-4">Ver historial</a>
+                    {% else %}
+                    <p style="color: #666;">Aún no tienes récords registrados.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

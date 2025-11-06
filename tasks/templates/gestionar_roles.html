@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load comparadores %}
+
+{% block content %}
+
+<div class="gestion-roles-container mt-5">
+    <h2 class="section-title">Gestionar roles</h2>
+    <p class="section-description">Modifica el rol de cada usuario según su función.</p>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="input-error">
+        {{ message }}
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <div class="tabla-usuarios-wrapper">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Rol actual</th>
+                    <th>Modificar</th>
+                    <th>Actualizar</th>
+                    <th>PIN</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in perfiles %}
+                <tr>
+                    <td>{{ perfil.user.first_name }} {{ perfil.user.last_name }}</td>
+                    <td>{{ perfil.get_role_display }}</td>
+                    <td>
+                        {% if perfil.user == usuario_actual and perfil.role == "admin" %}
+                        <span class="text-muted" style="padding: 0.6rem 0; display: inline-block; min-height: 38px;">
+                            No modificable
+                        </span>
+                        {% else %}
+                        <form method="POST" class="form-rol" id="form-rol-{{ perfil.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
+                            <select name="role" id="id_role_{{ perfil.id }}" class="input-field select-role">
+                                <option value="user" {% if perfil.role|igual:"user" %}selected{% endif %}>Usuario
+                                </option>
+                                <option value="coach" {% if perfil.role|igual:"coach" %}selected{% endif %}>Coach
+                                </option>
+                                <option value="admin" {% if perfil.role|igual:"admin" %}selected{% endif %}>
+                                    Administrador</option>
+                            </select>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-danger btn-full">Actualizar</button>
+                    </td>
+                    <td>
+                        <input type="password" name="pin" id="id_pin_{{ perfil.id }}" class="input-field pin-input"
+                            placeholder="••••">
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

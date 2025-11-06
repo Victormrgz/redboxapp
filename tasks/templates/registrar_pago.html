@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="gestion-roles-container mt-5">
+    <h2 class="section-title">Registrar pago</h2>
+    <p class="section-description">Aplica una suscripción activa al registrar el pago.</p>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="input-error">{{ message }}</div>
+    {% else %}
+    <div class="input-success">{{ message }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <div class="tabla-usuarios-wrapper">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Plan</th>
+                    <th>Monto</th>
+                    <th>Moneda</th>
+                    <th>PIN</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in perfiles %}
+                <tr>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <td>{{ perfil.user.first_name }} {{ perfil.user.last_name }}</td>
+                        <td>
+                            <select name="plan" class="input-field select-plan">
+                                <option value="basic">Básico</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="monto" step="0.01" class="input-field" placeholder="Monto">
+                        </td>
+                        <td>
+                            <select name="moneda" class="input-field select-moneda">
+                                <option value="VES">Bolívares</option>
+                                <option value="USD">Dólares</option>
+                                <option value="COP">Pesos</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="password" name="pin" class="input-field pin-input" placeholder="••••">
+                        </td>
+                        <td>
+                            <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
+                            <button type="submit" class="btn btn-success btn-full">Registrar</button>
+                        </td>
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
