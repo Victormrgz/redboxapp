@@ -146,6 +146,11 @@ class ReservationForm(forms.ModelForm):
             date=date
         ).exists()
 
+        # No permitir reservas más allá de 5 días desde hoy
+        if date > hoy + timedelta(days=5):
+            raise forms.ValidationError(
+                "Solo puedes reservar hasta 5 días desde hoy.")
+
         if ya_tiene_reserva_en_dia:
             raise forms.ValidationError(
                 "Ya tienes una reserva registrada para ese día.")
@@ -163,7 +168,7 @@ class ReservationForm(forms.ModelForm):
             raise forms.ValidationError(
                 "No puedes reservar una hora que ya ha pasado.")
 
-            # ✅ Paso 2: Validar límite de reservas por horario
+            # Validar límite de reservas por horario
         reservas_en_horario = Reservation.objects.filter(
             date=date,
             time_slot=time_slot

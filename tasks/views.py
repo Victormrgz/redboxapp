@@ -231,9 +231,18 @@ def registrar_pago(request):
             return redirect('registrar_pago')
 
         perfil = get_object_or_404(Profile, id=perfil_id)
+
         pago = Pago.objects.create(
-            perfil=perfil, plan=plan, monto=monto, moneda=moneda)
+            perfil=perfil,
+            nombre_usuario=perfil.user.get_full_name(),
+            correo_usuario=perfil.user.email,
+            plan=plan,
+            monto=monto,
+            moneda=moneda
+        )
+
         pago.aplicar_suscripcion()
+
         messages.success(
             request, f"Pago registrado y suscripción activada para {perfil.user.username}")
         return redirect('registrar_pago')
@@ -548,3 +557,25 @@ def eliminar_invitacion(request, invitacion_id):
     if not invitacion.usado:
         invitacion.delete()
     return redirect('gestionar_invitaciones')
+
+
+@staff_member_required
+@login_required
+def eliminar_usuario(request, usuario_id):
+    if request.method == 'POST':
+        pin = request.POST.get('pin', '').strip()
+        if not pin:
+            messages.error(
+                request, "Debes ingresar el PIN para eliminar el usuario.")
+            return redirect('gestionar_roles')
+        if pin != "1234":
+            messages.error(request, "PIN incorrecto.")
+            return redirect('gestionar_roles')
+
+        usuario = get_object_or_404(User, id=usuario_id)
+        if not usuario.is_superuser and usuario != request.user:
+            usuario.delete()
+            messages.success(request, "Usuario eliminado correctamente.")
+        else:
+            messages.error(request, "No puedes eliminar este usuario.")
+    return redirect('gestionar_roles')

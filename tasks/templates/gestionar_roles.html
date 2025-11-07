@@ -27,6 +27,7 @@
                     <th>Modificar</th>
                     <th>Actualizar</th>
                     <th>PIN</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,16 +35,18 @@
                 <tr>
                     <td>{{ perfil.user.first_name }} {{ perfil.user.last_name }}</td>
                     <td>{{ perfil.get_role_display }}</td>
+
                     <td>
                         {% if perfil.user == usuario_actual and perfil.role == "admin" %}
                         <span class="text-muted" style="padding: 0.6rem 0; display: inline-block; min-height: 38px;">
                             No modificable
                         </span>
                         {% else %}
-                        <form method="POST" class="form-rol" id="form-rol-{{ perfil.id }}">
+                        <form method="POST" action="{% url 'gestionar_roles' %}" class="form-rol"
+                            id="form-rol-{{ perfil.id }}">
                             {% csrf_token %}
                             <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
-                            <select name="role" id="id_role_{{ perfil.id }}" class="input-field select-role">
+                            <select name="role" class="input-field select-role">
                                 <option value="user" {% if perfil.role|igual:"user" %}selected{% endif %}>Usuario
                                 </option>
                                 <option value="coach" {% if perfil.role|igual:"coach" %}selected{% endif %}>Coach
@@ -52,20 +55,47 @@
                                     Administrador</option>
                             </select>
                     </td>
+
                     <td>
                         <button type="submit" class="btn btn-danger btn-full">Actualizar</button>
                     </td>
+
                     <td>
-                        <input type="password" name="pin" id="id_pin_{{ perfil.id }}" class="input-field pin-input"
-                            placeholder="••••">
+                        <input type="password" class="input-field pin-input" placeholder="••••" required
+                            oninput="syncPin(this, {{ perfil.id }})">
+                    </td>
+
+                    <td>
+                        </form> {# Cerramos el form de actualizar aquí #}
+
+                        {% if perfil.user != usuario_actual and not perfil.user.is_superuser %}
+                        <form method="POST" action="{% url 'eliminar_usuario' perfil.user.id %}" class="form-eliminar"
+                            id="form-eliminar-{{ perfil.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="pin" value="">
+                            <button type="submit" class="btn-cancelar"
+                                onclick="return confirm('¿Eliminar este usuario?')">Eliminar</button>
                         </form>
+                        {% else %}
+                        —
                         {% endif %}
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    function syncPin(input, perfilId) {
+        const pinValue = input.value;
+        const formRol = document.querySelector(`#form-rol-${perfilId} input[name="pin"]`);
+        const formEliminar = document.querySelector(`#form-eliminar-${perfilId} input[name="pin"]`);
+        if (formRol) formRol.value = pinValue;
+        if (formEliminar) formEliminar.value = pinValue;
+    }
+</script>
 
 {% endblock %}

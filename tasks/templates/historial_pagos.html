@@ -33,7 +33,13 @@
             <tbody>
                 {% for pago in pagos %}
                 <tr>
-                    <td>{{ pago.perfil.user.first_name }} {{ pago.perfil.user.last_name }}</td>
+                    <td>
+                        {% if pago.perfil and pago.perfil.user %}
+                        {{ pago.perfil.user.first_name }} {{ pago.perfil.user.last_name }}
+                        {% else %}
+                        {{ pago.nombre_usuario }}
+                        {% endif %}
+                    </td>
                     <td>{{ pago.fecha_pago|date:"d/m/Y" }}</td>
                     <td>{{ pago.monto }}</td>
                     <td>{{ pago.get_moneda_display }}</td>

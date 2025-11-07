@@ -49,4 +49,6 @@ urlpatterns = [
          name='gestionar_invitaciones'),
     path('invitaciones/eliminar/<int:invitacion_id>/',
          views.eliminar_invitacion, name='eliminar_invitacion'),
+    path('usuarios/eliminar/<int:usuario_id>/',
+         views.eliminar_usuario, name='eliminar_usuario'),
 ]

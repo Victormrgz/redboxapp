@@ -102,11 +102,14 @@ class Pago(models.Model):
         ('COP', 'Pesos'),
     ]
 
-    perfil = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    perfil = models.ForeignKey(
+        Profile, null=True, blank=True, on_delete=models.SET_NULL)
     fecha_pago = models.DateField(auto_now_add=True)
     monto = models.DecimalField(max_digits=8, decimal_places=2)
     moneda = models.CharField(max_length=3, choices=MONEDAS, default='VES')
     plan = models.CharField(max_length=10, choices=Profile.PLAN_CHOICES)
+    nombre_usuario = models.CharField(max_length=100, null=True, blank=True)
+    correo_usuario = models.EmailField(null=True, blank=True)
 
     def aplicar_suscripcion(self):
         self.perfil.plan = self.plan
