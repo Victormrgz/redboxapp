@@ -422,20 +422,20 @@ def crear_planificacion(request):
         if planificacion:
             if contenido == '':
                 planificacion.delete()
-                messages.success(request, "Planificación eliminada.")
+                # messages.success(request, "Planificación eliminada.")
                 return redirect('crear_planificacion')
             else:
                 form = PlanificacionForm(request.POST, instance=planificacion)
                 if form.is_valid():
                     form.save()
-                    messages.success(request, "Planificación actualizada.")
+                    # messages.success(request, "Planificación actualizada.")
                     return redirect('crear_planificacion')
         else:
             if contenido != '':
                 form = PlanificacionForm(request.POST)
                 if form.is_valid():
                     form.save()
-                    messages.success(request, "Planificación creada.")
+                    # messages.success(request, "Planificación creada.")
                     return redirect('crear_planificacion')
 
     return render(request, 'crear_planificacion.html', {
