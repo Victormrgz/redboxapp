@@ -5,7 +5,7 @@
 
 <div class="dashboard-header mt-5">
     <h2 class="section-title">Hola, {{ request.user.first_name }}!</h2>
-    <p class="section-description">Bienvenido al panel de control</p>
+    <p class="section-description">Bienvenid@ al panel de control</p>
     <p class="section-description">{{ fecha_actual|date:"d/m/Y" }}</p>
 
     {% if profile.is_activo %}
