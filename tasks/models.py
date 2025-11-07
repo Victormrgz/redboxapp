@@ -133,12 +133,17 @@ class Pago(models.Model):
 class LiftResult(models.Model):
     MOVEMENT_CHOICES = [
         ('Snatch', 'Snatch'),
+        ('Power Snatch', 'Power Snatch'),
         ('Clean & Jerk', 'Clean & Jerk'),
+        ('Clean', 'Clean'),
+        ('Power Clean', 'Power Clean'),
         ('Back Squat', 'Back Squat'),
         ('Front Squat', 'Front Squat'),
         ('Deadlift', 'Deadlift'),
         ('Bench Press', 'Bench Press'),
-        # puedes agregar más
+        ('Push Jerk', 'Push Jerk'),
+        ('Split Jerk', 'Split Jerk'),
+        ('Shoulder Press', 'Shoulder Press'),
     ]
 
     UNITS = [('kg', 'kg'), ('lb', 'lb')]

@@ -188,13 +188,23 @@ class PlanificacionForm(forms.ModelForm):
         model = Planificacion
         fields = ['fecha', 'contenido']
         widgets = {
-            'fecha': forms.DateInput(attrs={'type': 'date', 'class': 'input-field'}),
+            'fecha': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input-field'},
+                format='%Y-%m-%d'  # ← formato requerido por el navegador
+            ),
             'contenido': forms.Textarea(attrs={
                 'rows': 6,
                 'class': 'input-field',
                 'placeholder': 'Descripción opcional'
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Asegura que el campo fecha se inicialice correctamente
+        if self.instance and self.instance.fecha:
+            self.fields['fecha'].initial = self.instance.fecha.strftime(
+                '%Y-%m-%d')
 
 
 class PerfilForm(forms.ModelForm):

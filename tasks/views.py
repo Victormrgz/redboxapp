@@ -479,7 +479,6 @@ def my_results(request):
         nuevo = form.save(commit=False)
         nuevo.user = request.user
         nuevo.save()
-        messages.success(request, "Resultado guardado correctamente.")
         return redirect('my_results')
 
     # Obtener PRs por movimiento
