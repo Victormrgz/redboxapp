@@ -1,5 +1,6 @@
 # Views
 
+import random
 from collections import defaultdict
 from django.utils.formats import date_format
 from datetime import datetime, timedelta
@@ -9,11 +10,13 @@ from django.contrib import messages
 from datetime import date, datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from .models import Reservation, Planificacion, Profile, Pago, LiftResult, Invitacion
+from .models import Reservation, Planificacion, Profile, Pago, LiftResult, Invitacion, OTP
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import CustomUserCreationForm, FlexibleAuthForm, LiftResultForm, ReservationForm, PlanificacionForm, PerfilForm
-from django.contrib.auth import login, logout, authenticate
+from .forms import CustomUserCreationForm, FlexibleAuthForm, LiftResultForm, ReservationForm, PlanificacionForm, PerfilForm, EmailForm, OTPForm, CustomPasswordChangeForm
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import EmailMessage
+from django.utils.encoding import force_str
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 User = get_user_model()
@@ -59,11 +62,20 @@ def gestionar_roles(request):
 @login_required
 def editar_perfil(request):
     profile = request.user.profile
+    user = request.user
 
     if request.method == 'POST':
         form = PerfilForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
+
+            new_password = form.cleaned_data.get('new_password1')
+            if new_password:
+                user.set_password(new_password)
+                user.save()
+                # mantiene sesión activa
+                update_session_auth_hash(request, user)
+
             messages.success(request, "Perfil actualizado correctamente.")
             return redirect('dashboard')
     else:
@@ -578,3 +590,71 @@ def eliminar_usuario(request, usuario_id):
         else:
             messages.error(request, "No puedes eliminar este usuario.")
     return redirect('gestionar_roles')
+
+
+def request_otp_view(request):
+    if request.method == 'POST':
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                code = str(random.randint(100000, 999999))
+                OTP.objects.create(user=user, code=code)
+
+                message = EmailMessage(
+                    subject=force_str('Tu código de acceso a REDBOX'),
+                    body=force_str(f'Tu código es: {code}'),
+                    from_email='noreply@redboxapp.com',
+                    to=[email],
+                )
+                message.content_subtype = 'plain'
+                message.encoding = 'utf-8'
+                message.send(fail_silently=False)
+
+                request.session['otp_user_id'] = user.id
+                return redirect('verify_otp')
+            except User.DoesNotExist:
+                form.add_error(
+                    'email', 'No hay cuenta asociada a este correo.')
+    else:
+        form = EmailForm()
+    return render(request, 'auth/request_otp.html', {'form': form})
+
+
+def verify_otp_view(request):
+    user_id = request.session.get('otp_user_id')
+    if not user_id:
+        return redirect('request_otp')
+
+    user = User.objects.get(id=user_id)
+
+    if request.method == 'POST':
+        form = OTPForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            otp = OTP.objects.filter(user=user, code=code).order_by(
+                '-created_at').first()
+            if otp and otp.is_valid():
+                login(request, user)
+                OTP.objects.filter(user=user).delete()
+                return redirect('dashboard')
+            else:
+                form.add_error('code', 'Código inválido o expirado.')
+    else:
+        form = OTPForm()
+    return render(request, 'auth/verify_otp.html', {'form': form})
+
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            # mantiene sesión activa
+            update_session_auth_hash(request, form.user)
+            return redirect('editar_perfil')
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+    return render(request, 'auth/change_password.html', {'form': form})

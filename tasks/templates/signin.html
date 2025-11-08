@@ -26,6 +26,10 @@
 
     <button type="submit" class="signup-btn">Iniciar sesión</button>
 
+    <p class="form-link mt-2">
+        <a href="{% url 'request_otp' %}" class="forgot-link">Ingresar sin contraseña</a>
+    </p>
+
     <p class="form-link mt-3">
         ¿No tienes cuenta?
         <a href="{% url 'signup' %}">Crea una aquí</a>

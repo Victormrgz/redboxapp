@@ -1,0 +1,22 @@
+{% extends 'auth_base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<form method="POST" class="signup-form">
+    {% csrf_token %}
+    <h2 class="form-title">Verifica tu código</h2>
+
+    <div class="form-group">
+        {{ form.code|add_class:"input-field" }}
+        {% for err in form.code.errors %}
+        <span class="input-error">{{ err }}</span>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="signup-btn">Ingresar</button>
+
+    <p class="form-link mt-3">
+        <a href="{% url 'request_otp' %}">¿No recibiste el código?</a>
+    </p>
+</form>
+{% endblock %}

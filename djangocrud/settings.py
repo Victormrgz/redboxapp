@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='asdasdasdasdaasdasd')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['redboxapp.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -34,6 +34,15 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 
 # Application definition
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'victorramirezcontact@gmail.com'
+EMAIL_HOST_PASSWORD = 'xoat aqws lbjj kpls'
+DEFAULT_FROM_EMAIL = 'RedboxApp <tu_correo@gmail.com>'
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',

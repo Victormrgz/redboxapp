@@ -32,15 +32,23 @@
             </div>
             <div class="perfil-group">
                 {{ form.weight.label_tag }}
-                <input type="text" name="{{ form.weight.name }}" value="{{ form.weight.value|default_if_none:'' }}"
-                    class="input-field" inputmode="decimal" placeholder="kg">
+                {{ form.weight }}
                 {{ form.weight.errors }}
             </div>
             <div class="perfil-group">
                 {{ form.height.label_tag }}
-                <input type="text" name="{{ form.height.name }}" value="{{ form.height.value|default_if_none:'' }}"
-                    class="input-field" inputmode="decimal" placeholder="cm">
+                {{ form.height }}
                 {{ form.height.errors }}
+            </div>
+            <div class="perfil-group">
+                <label for="id_new_password1">Nueva contraseña</label>
+                <input type="password" name="new_password1" class="input-field" placeholder="••••••••">
+                {{ form.new_password1.errors }}
+            </div>
+            <div class="perfil-group">
+                <label for="id_new_password2">Confirmar nueva contraseña</label>
+                <input type="password" name="new_password2" class="input-field" placeholder="••••••••">
+                {{ form.new_password2.errors }}
             </div>
         </div>
 

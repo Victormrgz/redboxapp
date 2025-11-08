@@ -51,4 +51,7 @@ urlpatterns = [
          views.eliminar_invitacion, name='eliminar_invitacion'),
     path('usuarios/eliminar/<int:usuario_id>/',
          views.eliminar_usuario, name='eliminar_usuario'),
+    path('ingreso-sin-clave/', views.request_otp_view, name='request_otp'),
+    path('verificar-codigo/', views.verify_otp_view, name='verify_otp'),
+    path('cambiar-contraseña/', views.change_password_view, name='change_password'),
 ]

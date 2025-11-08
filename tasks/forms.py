@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 # pylint: disable=imported-auth-user
 from django.contrib.auth.models import User
 from .models import Reservation, Planificacion, Profile, LiftResult, Invitacion
@@ -64,6 +64,21 @@ class CustomUserCreationForm(UserCreationForm):
 
         self.invitacion = invitacion  # guardamos para usar en la vista
         return codigo
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label='Contraseña actual',
+        widget=forms.PasswordInput(attrs={'class': 'input-field'}),
+    )
+    new_password1 = forms.CharField(
+        label='Nueva contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'input-field'}),
+    )
+    new_password2 = forms.CharField(
+        label='Confirmar nueva contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'input-field'}),
+    )
 
 
 class FlexibleAuthForm(forms.Form):
@@ -212,8 +227,27 @@ class PerfilForm(forms.ModelForm):
     birth_date = forms.DateField(required=False)
     gender = forms.ChoiceField(choices=Profile.GENDER_CHOICES, required=False)
     identity_card = forms.CharField(required=False)
-    weight = forms.FloatField(required=False)
-    height = forms.FloatField(required=False)
+    weight = forms.DecimalField(
+        label='Peso',
+        widget=forms.NumberInput(
+            attrs={'class': 'input-field', 'placeholder': 'kg'})
+    )
+    height = forms.DecimalField(
+        label='Altura',
+        widget=forms.NumberInput(
+            attrs={'class': 'input-field', 'placeholder': 'cm'})
+    )
+
+    new_password1 = forms.CharField(
+        label='Nueva contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'input-field'}),
+        required=False
+    )
+    new_password2 = forms.CharField(
+        label='Confirmar nueva contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'input-field'}),
+        required=False
+    )
 
     class Meta:
         model = Profile
@@ -261,6 +295,19 @@ class PerfilForm(forms.ModelForm):
         self.fields['identity_card'].label = 'Cédula'
         self.fields['weight'].label = 'Peso'
         self.fields['height'].label = 'Altura'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pwd1 = cleaned_data.get('new_password1')
+        pwd2 = cleaned_data.get('new_password2')
+
+        if pwd1 or pwd2:
+            if pwd1 != pwd2:
+                self.add_error('new_password2',
+                               'Las contraseñas no coinciden.')
+            elif len(pwd1) < 8:
+                self.add_error(
+                    'new_password1', 'La contraseña debe tener al menos 8 caracteres.')
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
@@ -350,3 +397,11 @@ class LiftResultForm(forms.ModelForm):
             'weight': forms.NumberInput(attrs={'class': 'input-field', 'step': '0.5'}),
             'unit': forms.Select(attrs={'class': 'input-field'}),
         }
+
+
+class EmailForm(forms.Form):
+    email = forms.EmailField()
+
+
+class OTPForm(forms.Form):
+    code = forms.CharField(max_length=6)
